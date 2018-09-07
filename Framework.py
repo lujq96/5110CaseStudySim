@@ -51,7 +51,8 @@ import Machine
 def ManualPolicy():
     # Maybe we should define the policy seperately?
     
-T = 0
+T = 0 # T for Time
+# Here are all the machines we have now
 exChunker=[Machine({Type:"exC"}),Machine({Type:"exC"}),Machine({Type:"exC"}),Machine({Type:"exC"})]
 inChunker=[Machine({Type:"inC"}),Machine({Type:"inC"}),Machine({Type:"inC"})]
 Mill = [Machine({Type:"Mi"}),Machine({Type:"Mi"})]
@@ -59,8 +60,9 @@ Drill = [Machine({Type:"Dr"})]
 while True:
     if T%(24*7*2)==0:
         print("New weeks come, please add needings!")
-        Queue["inC"]["B15"]+=int(input("B15"))
+        Queue["inC"]["B15"]+=int(input("B15: "))
         ... #Here comes other prediction of needs
+    # Maybe we can have more machine? To add a machine, please put code here.
     T+=0.5
     for exchunker in exChunker:
         if self.Status>0:
