@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Basic Framework for the Case Study
+Created on Fri Sep  7 19:52:20 2018
+
+@author: lujq96
 """
-"""
+
 Dict = {"B15":0, "C17":0, "D20":0, "D25":0, "E26":0, "F35":0, "N99":0}
 Queue = dict()
 Queue["exC"] = dict(Dict)
@@ -45,38 +47,3 @@ class Machine(*args):
             if self.Status ==0:
                 Queue[Next(self.Type),self.Last]+=1     
         return
-"""
-import Machine
-
-def ManualPolicy():
-    # Maybe we should define the policy seperately?
-    
-T = 0
-exChunker=[Machine({Type:"exC"}),Machine({Type:"exC"}),Machine({Type:"exC"}),Machine({Type:"exC"})]
-inChunker=[Machine({Type:"inC"}),Machine({Type:"inC"}),Machine({Type:"inC"})]
-Mill = [Machine({Type:"Mi"}),Machine({Type:"Mi"})]
-Drill = [Machine({Type:"Dr"})]
-while True:
-    if T%(24*7*2)==0:
-        print("New weeks come, please add needings!")
-        Queue["inC"]["B15"]+=int(input("B15"))
-        ... #Here comes other prediction of needs
-    T+=0.5
-    for exchunker in exChunker:
-        if self.Status>0:
-            exchunker.update()
-        if self.Status==0:
-            ...
-            #List the status of Machine, status of the Models choose which to get
-            Need = input()
-            if Need != "":
-            #if the need <=0: put an error message
-                exchunker.process(Need)
-    for ... in ...:
-        
-    for ... in ...:
-        
-    for ... in ...:
-        
-    #Output What happened Now.
-    
