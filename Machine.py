@@ -30,7 +30,7 @@ class Machine(*args):
         else:
             self.Status = Processtime(self.Type,Model)+Changetime(self.Type,Model)
         self.Last = Model
-        Queue[self.Type, Model]-=1
+        Queue[self.Type][Model]-=1
         return
     def update(self):
         if self.Status >0:
@@ -45,5 +45,5 @@ class Machine(*args):
                 else:
                     return "Fin"
             if self.Status ==0:
-                Queue[Next(self.Type),self.Last]+=1     
+                Queue[Next(self.Type)][self.Last]+=1     
         return
