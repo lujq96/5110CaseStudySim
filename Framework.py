@@ -48,6 +48,12 @@ class Machine(*args):
 """
 import Machine
 
+def StatusPrint():
+    # Comments at where it is used.
+    
+def Validation():
+    # COmments at where it is used.
+    
 def ManualPolicy():
     # Maybe we should define the policy seperately?
     
@@ -64,21 +70,27 @@ while True:
         ... #Here comes other prediction of needs
     # Maybe we can have more machine? To add a machine, please put code here.
     T+=0.5
+    for ... in ...: #internal Chunker first
+    # Update status of the machine
     for exchunker in exChunker:
         if self.Status>0:
             exchunker.update()
+    # Check if new models can add to the machine
+    for exchunker in exChunker:
         if self.Status==0:
-            ...
-            #List the status of Machine, status of the Models choose which to get
+            StatusPrint(args you like)
+            # List the time, status of Machine, status of the Models choose which to get
+            # Who would like to make it???
             Need = input()
             if Need != "":
-            #if the need <=0: put an error message
-                exchunker.process(Need)
-    for ... in ...:
+                if Validation():
+                # Here is function to valid: if there is Need in need, put an error message. 
+                # And if there are two other machine working on this model, put another error message.
+                # Please someone comes to write the function!
+                    exchunker.process(Need)
+    for ... in ...: #Mill here
         
-    for ... in ...:
-        
-    for ... in ...:
+    for ... in ...: #Drill here
         
     #Output What happened Now.
     
