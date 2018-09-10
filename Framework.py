@@ -154,7 +154,7 @@ while True:
         # Check if new models can add to the machine
         for machine in MType: #internal Chunker first
             if machine.getStatus()==0 and set(Queue[machine.getType()].values())!=set([0]):
-                Need = input("What to put into {}? Press Enter to add nothing".format(machine.getName()))
+                Need = input("What to put into {}? Press Enter to add nothing:".format(machine.getName()))
                 while Need!="":
                     if Validation(machine,MType,Need):
                         # Here is function to valid: if there is Need in need, put an error message. 
@@ -163,7 +163,7 @@ while True:
                         machine.process(Need)
                         Need = ""
                     else:
-                        Need = input("Invalid Input! Please try again. Press Enter add nothing")
+                        Need = input("Invalid Input! Please try again. Press Enter add nothing:")
     StatusPrint(T,Queue,inChunker,exChunker,Mill,Drill,"end")
     #Output What happened Now.
     
