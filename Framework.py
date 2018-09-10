@@ -156,7 +156,7 @@ while True:
             if machine.getStatus()==0 and set(Queue[machine.getType()].values())!=set([0]):
                 Need = input("What to put into {}? Press Enter to add nothing:".format(machine.getName()))
                 while Need!="":
-                    if Validation(machine,MType,Need):
+                    if Validation(machine,Machines[key],Need):
                         # Here is function to valid: if there is Need in need, put an error message. 
                         # And if there are two other machine working on this model, put another error message.
                         # Please someone comes to write the function!
