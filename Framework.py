@@ -90,20 +90,15 @@ class Machine():
     def getName(self):
         return self.Name
 
-def StatusPrint(T,Need,iC,eC,M,D,node):
+def StatusPrint(T,Need,Machines,node):
     # Comments at where it is used.
     print()
     print("At {} of time {}".format(node,T))
     for key in Need.keys():
         print("{}: {}".format(key,Need[key]))
-    for i in iC:
-        i.Print()
-    for i in eC:
-        i.Print()
-    for i in M:
-        i.Print()
-    for i in D:
-        i.Print()
+    for key in Machines.keys():
+        for i in Machines[key]:
+            i.Print()
     
 def Validation(machine,Type,model):
     # COmments at where it is used.
@@ -127,6 +122,7 @@ exChunker=[Machine(Type="exC",Name="ChunkerA"),Machine(Type="exC",Name="ChunkerB
            Machine(Type="exC",Name="ChunkerD")]
 Mill = [Machine(Type="Mi",Name="Mill1"),Machine(Type="Mi",Name="Mill2")]
 Drill = [Machine(Type="Dr",Name="Drill1")]
+Machines = {"inC":inChunker,"exC":exChunker,"Mi":Mill,"Dr":Drill}
 while True:
     if T%(24*7*2)==0:
         print("New week comes. Please add the demand!")
@@ -140,6 +136,10 @@ while True:
     # Maybe we can have more machine? To add a machine, please put code here.
     T+=0.5
     # Update status of the machine
+    for key in Machines.keys():
+        for machine in Machines[key]:
+            machine.update()
+    """
     for inchunker in inChunker:
         inchunker.update()
     for exchunker in exChunker:
@@ -148,11 +148,11 @@ while True:
         mill.update()
     for drill in Drill:
         drill.update()
-    StatusPrint(T,Queue,inChunker,exChunker,Mill,Drill,"start")
-    Type = [inChunker,exChunker,Mill,Drill]
-    for MType in Type:
+    """
+    StatusPrint(T,Queue,Machines,"start")
+    for key in Machines.keys():
         # Check if new models can add to the machine
-        for machine in MType: #internal Chunker first
+        for machine in Machines[key]: #internal Chunker first
             if machine.getStatus()==0 and set(Queue[machine.getType()].values())!=set([0]):
                 Need = input("What to put into {}? Press Enter to add nothing:".format(machine.getName()))
                 while Need!="":
