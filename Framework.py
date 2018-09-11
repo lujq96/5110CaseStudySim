@@ -12,6 +12,12 @@ Queue["exC"] = dict(Dict)
 Queue["Mi"] = dict(Dict)
 Queue["Dr"] = dict(Dict)
 Queue["Fin"] = dict(Dict)
+WaitTime = dict()
+WaitTime["inC"] = dict(Dict)
+WaitTime["exC"] = dict(Dict)
+WaitTime["Mi"] = dict(Dict)
+WaitTime["Dr"] = dict(Dict)
+WaitTime["Fin"] = dict(Dict)
 #Queue[x] means how many of each models are now waiting for processing
 
 def Processtime(Machine,Model):
@@ -66,7 +72,7 @@ class Machine():
             self.Last = Model
         else:
             print("Changing tooling kits... Please add model later.")
-            self.change(self,Model)
+            self.change(Model)
             #self.Status = Processtime(self.Type,Model)+Changetime(self.Type,Model)
         return
     def change(self,Model):
@@ -189,4 +195,8 @@ while flag:
     StatusPrint(T,Queue,Machines,"end")
     T+=0.5
     #Output What happened Now.
-    
+    print("Wait Time for each model at each place is:")
+    for key in WaitTime.keys():
+        for val in WaitTime[key].keys():
+            WaitTime[key][val]+=Queue[key][val]*0.5
+        print(WaitTime[key])
