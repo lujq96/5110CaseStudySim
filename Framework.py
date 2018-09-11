@@ -53,22 +53,31 @@ def Changetime(Machine,Model):
     return 3
 
 class Machine():
-    def __init__(self,Type,Name):
+    def __init__(self,Type,Name,Last=None):
         self.Type = Type #{"exC","inC","Mi","Dr"}
-        self.Last = None #The last object it processed
+        self.Last = Last #The last object it processed
         self.Status = 0 #How many hours before it is free
         self.Name = Name
+        self.WTime = 0
     def process(self,Model):
         if self.Last == Model:
             self.Status = Processtime(self.Type,Model)
+            Queue[self.Type][Model]-=1
+            self.Last = Model
         else:
-            self.Status = Processtime(self.Type,Model)+Changetime(self.Type,Model)
-        self.Last = Model
-        Queue[self.Type][Model]-=1
+            print("Changing tooling kits... Please add model later.")
+            self.change(self,Model)
+            #self.Status = Processtime(self.Type,Model)+Changetime(self.Type,Model)
         return
+    def change(self,Model):
+        if self.Last == Model:
+            return
+        self.Status -= Changetime(self.Type,Model)
+        self.Last = Model
     def update(self):
         if self.Status >0:
             self.Status -= 0.5
+            self.WTime += 0.5
             def Next(Type):
                 if Type=="inC":
                     return "exC"
@@ -79,7 +88,9 @@ class Machine():
                 else:
                     return "Fin"
             if self.Status ==0:
-                Queue[Next(self.Type)][self.Last]+=1     
+                Queue[Next(self.Type)][self.Last]+=1   
+        if self.Status <0:
+            self.Status += 0.5
         return
     def Print(self):
         print([self.Name,self.Type,self.Last,self.Status])
@@ -123,8 +134,9 @@ exChunker=[Machine(Type="exC",Name="ChunkerA"),Machine(Type="exC",Name="ChunkerB
 Mill = [Machine(Type="Mi",Name="Mill1"),Machine(Type="Mi",Name="Mill2")]
 Drill = [Machine(Type="Dr",Name="Drill1")]
 Machines = {"inC":inChunker,"exC":exChunker,"Mi":Mill,"Dr":Drill}
-while True:
-    if T%(24*7*2)==0:
+flag = True
+while flag:
+    if T%(8*2*7)==0:
         print("New week comes. Please add the demand!")
         Queue["inC"]["B15"]+=int(input("B15: "))
         Queue["inC"]["C17"]+=int(input("C17: "))
@@ -134,7 +146,6 @@ while True:
         Queue["Dr"]["F35"]+=int(input("F35: "))
         ... #Here comes other prediction of needs
     # Maybe we can have more machine? To add a machine, please put code here.
-    T+=0.5
     # Update status of the machine
     for key in Machines.keys():
         for machine in Machines[key]:
@@ -155,15 +166,27 @@ while True:
         for machine in Machines[key]: #internal Chunker first
             if machine.getStatus()==0 and set(Queue[machine.getType()].values())!=set([0]):
                 Need = input("What to put into {}? Press Enter to add nothing:".format(machine.getName()))
+                if Need == "Q":
+                    flag = False
+                    break
+                if Need == "":
+                    Need2 = input("Wanna change the model using on {}? Input the model name or Press Enter to skip:".format(machine.getName()))
+                    if Need2 != "":
+                        while Need2 not in Dict.keys():
+                            Need2 = input("Invalid Input! Please try again: ")
+                        machine.change(Need2)
                 while Need!="":
-                    if Validation(machine,Machines[key],Need):
+                    if Need not in Dict.keys():
+                        Need = input("Invalid Input! Please try again. Press Enter add nothing:")
+                    elif Validation(machine,Machines[key],Need):
                         # Here is function to valid: if there is Need in need, put an error message. 
                         # And if there are two other machine working on this model, put another error message.
                         # Please someone comes to write the function!
                         machine.process(Need)
                         Need = ""
                     else:
-                        Need = input("Invalid Input! Please try again. Press Enter add nothing:")
-    StatusPrint(T,Queue,inChunker,exChunker,Mill,Drill,"end")
+                        Need = input("Invalid Input! Please try again. Press Enter to add nothing:")
+    StatusPrint(T,Queue,Machines,"end")
+    T+=0.5
     #Output What happened Now.
     
