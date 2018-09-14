@@ -179,12 +179,14 @@ def DefaultPolicy(T,mac,Macs):
         if Queue["inC"]["E26"]>0:
             mac.process(T,"E26")
     elif mac.getName()=="Chunker3":
-        if Queue["inC"]["B15"]>0:
-            mac.process(T,"B15")
-        elif Queue["inC"]["D20"]>0:
-            mac.process(T,"D20")
+        if mac.Last!=None and Queue["inC"][mac.Last]>0:
+            mac.process(T,mac.Last)
         elif Queue["inC"]["D25"]>0:
             mac.process(T,"D25")
+        elif Queue["inC"]["D20"]>0:
+            mac.process(T,"D20")
+        elif Queue["inC"]["B15"]>0:
+            mac.process(T,"B15")
     elif mac.getName()=="ChunkerC":
         if Queue["exC"]["E26"]>0:
             mac.process(T,"E26")
