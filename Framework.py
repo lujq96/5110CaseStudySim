@@ -67,10 +67,12 @@ class Machine():
         self.Name = Name
         self.WTime = 0
         self.LastChange = -1
+        self.Processed=dict(Dict)
     def process(self,T,Model):
         if self.Last == Model:
             self.Status = Processtime(self.Type,Model)
             Queue[self.Type][Model]-=1
+            self.Processed[Model]+=1
             self.Last = Model
         else:
             print("Changing tooling kits... Please add model later.")
@@ -268,8 +270,14 @@ Mill = [Machine(Type="Mi",Name="Mill1"),Machine(Type="Mi",Name="Mill2")]
 Drill = [Machine(Type="Dr",Name="Drill1")]
 Machines = {"inC":inChunker,"exC":exChunker,"Mi":Mill,"Dr":Drill}
 flag = True
+flag1 = True
 while flag:
     if T%(8*2*7)==0:
+        print("\n Table of models processed by each machine:")
+        for key in Machines.keys():
+                for machine in Machines[key]:
+                    print("{}: {}".format(machine.getName(),machine.Processed))
+        flag1 = True
         input("Press any key to continue.")
         print("New week comes. Please add the demand!")
         Queue["inC"]["B15"]+=int(input("B15: "))
@@ -296,6 +304,12 @@ while flag:
             if machine.getStatus()==0:
                 cnt+=1
     if cnt==10:
+        if flag1:
+            print("\n Table of models processed by each machine:")
+            for key in Machines.keys():
+                for machine in Machines[key]:
+                    print("{}: {}".format(machine.getName(),machine.Processed))
+            flag1 = False
         input("Finished!")
     StatusPrint(T,Queue,Machines,"end")
     T+=0.5
