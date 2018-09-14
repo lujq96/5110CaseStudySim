@@ -317,12 +317,12 @@ Drill = [Machine(Type="Dr",Name="Drill1")]
 Machines = {"inC":inChunker,"exC":exChunker,"Mi":Mill,"Dr":Drill}
 flag = True
 flag1 = True
-worker = []
+worker =[0,0,0,0,0,0,0,0,0,0,0]
 while flag:
     if T%(8*2*7)==0:
         WaitTime = reset(Machines)
         print("Working worker number: {}".format(worker))
-        worker = []
+        worker = [0,0,0,0,0,0,0,0,0,0,0]
         print("\n Table of models processed by each machine:")
         for key in Machines.keys():
                 for machine in Machines[key]:
@@ -344,7 +344,7 @@ while flag:
             machine.update()
     StatusPrint(T,Queue,Machines,"start")
     cnt = 0
-    worker.append(0)
+    cntworker = 0
     for key in Machines.keys():
         # Check if new models can add to the machine
         for machine in Machines[key]: #internal Chunker first
@@ -355,7 +355,8 @@ while flag:
             if machine.getStatus()==0:
                 cnt+=1
             if machine.getStatus()<0:
-                worker[-1]+=1
+                cntworker+=1
+    worker[cntworker]+=1
     if cnt==10:
         if flag1:
             print("\n Table of models processed by each machine:")
