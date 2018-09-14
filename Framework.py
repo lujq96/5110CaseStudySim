@@ -191,55 +191,82 @@ def DefaultPolicy(T,mac,Macs):
         elif ((Macs["inC"][2].Last=="E26" and Macs["inC"][2].getStatus()==0) or Macs["inC"][2].Last!="E26") and Queue["exC"]["D20"]>0:
             mac.process(T,"D20")
     elif mac.getName()=="ChunkerD":
-        if Queue["exC"]["B15"]>0:
-            mac.process(T,"B15")
-        elif ((Macs["inC"][2].Last=="B15" and Macs["inC"][2].getStatus()==0) or Macs["inC"][2].Last!="B15") and Queue["exC"]["D25"]>0:
+        if Queue["exC"]["D25"]>0:
             mac.process(T,"D25")
-    elif mac.getName()=="Mill2":
-        if Queue["Mi"]["B15"]>0:
+        elif ((Macs["inC"][2].Last=="D25" and Macs["inC"][2].getStatus()==0) or Macs["inC"][2].Last!="D25") and Queue["exC"]["B15"]>0:
             mac.process(T,"B15")
-            return True
-        if Macs["exC"][3].Last=="B15" and Macs["exC"][3].getStatus()>0:
+    elif mac.getName()=="Mill2":
+        if mac.Last!=None and Queue["Mi"][mac.Last]>0:
+            mac.process(T,mac.Last)
             return True
         if Queue["Mi"]["E26"]>0:
             mac.process(T,"E26")
             return True
+        if Queue["Mi"]["D20"]>10:
+            mac.process(T,"D20")
+            return True
+        if Queue["Mi"]["D25"]>10:
+            mac.process(T,"D25")
+            return True
+        if Queue["Mi"]["B15"]>10:
+            mac.process(T,"B15")
+            return True
         if Macs["exC"][2].Last=="E26" and Macs["exC"][2].getStatus()>0:
+            return True
+        if Queue["Mi"]["D20"]>0:
+            mac.process(T,"D20")
+            return True
+        if Macs["exC"][2].Last=="D20" and Macs["exC"][2].getStatus()>0:
             return True
         if Queue["Mi"]["D25"]>0:
             mac.process(T,"D25")
             return True
         if Macs["exC"][2].Last=="D25" and Macs["exC"][2].getStatus()>0:
             return True
-        if Queue["Mi"]["D20"]>0:
-            mac.process(T,"D20")
+        if Queue["Mi"]["B15"]>0:
+            mac.process(T,"B15")
             return True
     else:
+        if mac.Last!=None and Queue["Dr"][mac.Last]>0:
+            mac.process(T,mac.Last)
+            return True
         if Queue["Dr"]["F35"]>0:
             mac.process(T,"F35")
+            return True
+        if Queue["Dr"]["E26"]>0:
+            mac.process(T,"E26")
+            return True
+        if Queue["Dr"]["D20"]>10:
+            mac.process(T,"D20")
+            return True
+        if Queue["Dr"]["C17"]>10:
+            mac.process(T,"C17")
+            return True
+        if Queue["Dr"]["D25"]>10:
+            mac.process(T,"D25")
+            return True
+        if Queue["Dr"]["B15"]>10:
+            mac.process(T,"B15")
+            return True
+        if Macs["Mi"][1].Last=="E26" and Macs["Mi"][1].getStatus()>0:
+            return True
+        if Queue["Dr"]["D20"]>0:
+            mac.process(T,"D20")
+            return True
+        if Macs["Mi"][1].Last=="D20" and Macs["Mi"][1].getStatus()>0:
             return True
         if Queue["Dr"]["C17"]>0:
             mac.process(T,"C17")
             return True
         if Macs["Mi"][0].Last=="C17" and Macs["Mi"][0].getStatus()>0:
             return True
-        if Queue["Dr"]["E26"]>0:
-            mac.process(T,"E26")
-            return True
-        if Macs["Mi"][1].Last=="E26" and Macs["Mi"][1].getStatus()>0:
-            return True
-        if Queue["Dr"]["B15"]>0:
-            mac.process(T,"B15")
-            return True
-        if Macs["Mi"][1].Last=="B15" and Macs["Mi"][1].getStatus()>0:
-            return True
         if Queue["Dr"]["D25"]>0:
             mac.process(T,"D25")
             return True
         if Macs["Mi"][1].Last=="D25" and Macs["Mi"][1].getStatus()>0:
             return True
-        if Queue["Dr"]["D20"]>0:
-            mac.process(T,"D20")
+        if Queue["Dr"]["B15"]>0:
+            mac.process(T,"B15")
             return True
     return True
     
