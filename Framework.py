@@ -20,6 +20,17 @@ WaitTime["Dr"] = dict(Dict)
 WaitTime["Fin"] = dict(Dict)
 #Queue[x] means how many of each models are now waiting for processing
 
+def reset(Macs):
+    WaitTime = dict()
+    WaitTime["inC"] = dict(Dict)
+    WaitTime["exC"] = dict(Dict)
+    WaitTime["Mi"] = dict(Dict)
+    WaitTime["Dr"] = dict(Dict)
+    WaitTime["Fin"] = dict(Dict)
+    #for key in Macs.keys():
+    #    for val in Macs[key]:
+    return WaitTime
+
 def Processtime(Machine,Model):
     # This is a simple function that will return the time to process Model on Machine
     if Machine=="inC":
@@ -273,6 +284,7 @@ flag = True
 flag1 = True
 while flag:
     if T%(8*2*7)==0:
+        WaitTime = reset(Machines)
         print("\n Table of models processed by each machine:")
         for key in Machines.keys():
                 for machine in Machines[key]:
