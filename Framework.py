@@ -7,6 +7,7 @@ import numpy as np
 
 Dict = {"B15":0, "C17":0, "D20":0, "D25":0, "E26":0, "F35":0, "N99":0}
 Queue = dict()
+CBL = dict(Dict)
 Queue["inC"] = dict(Dict)
 Queue["exC"] = dict(Dict)
 Queue["Mi"] = dict(Dict)
@@ -115,7 +116,9 @@ class Machine():
                 else:
                     return "Fin"
             if self.Status ==0:
-                Queue[Next(self.Type)][self.Last]+=1   
+                Queue[Next(self.Type)][self.Last]+=1
+                if Next(self.Type)=="Fin":
+                    CBL[self.Last]-=1
         if self.Status <0:
             self.Status += 0.5
         return
@@ -321,7 +324,8 @@ worker =[0,0,0,0,0,0,0,0,0,0,0]
 while flag:
     if T%(8*2*7)==0:
         WaitTime = reset(Machines)
-        print("Working worker number: {}".format(worker))
+        print("\nWorking worker number: {}".format(worker))
+        print("Current BackLog: {}".format(CBL))
         worker = [0,0,0,0,0,0,0,0,0,0,0]
         print("\n Table of models processed by each machine:")
         for key in Machines.keys():
@@ -330,12 +334,24 @@ while flag:
         flag1 = True
         input("Press any key to continue.")
         print("New week comes. Please add the demand!")
-        Queue["inC"]["B15"]+=int(input("B15: "))
-        Queue["inC"]["C17"]+=int(input("C17: "))
-        Queue["inC"]["D20"]+=int(input("D20: "))
-        Queue["inC"]["D25"]+=int(input("D25: "))
-        Queue["inC"]["E26"]+=int(input("E26: "))
-        Queue["Dr"]["F35"]+=int(input("F35: "))
+        Need=int(input("B15: "))
+        Queue["inC"]["B15"]+=Need
+        CBL["B15"]+=Need
+        Need=int(input("C17: "))
+        Queue["inC"]["C17"]+=Need
+        CBL["C17"]+=Need
+        Need=int(input("D20: "))
+        Queue["inC"]["D20"]+=Need
+        CBL["D20"]+=Need
+        Need=int(input("D25: "))
+        Queue["inC"]["D25"]+=Need
+        CBL["D25"]+=Need
+        Need=int(input("E26: "))
+        Queue["inC"]["E26"]+=Need
+        CBL["E26"]+=Need
+        Need=int(input("F35: "))
+        Queue["Dr"]["F35"]+=Need
+        CBL["F35"]+=Need
         ... #Here comes other prediction of needs
     # Maybe we can have more machine? To add a machine, please put code here.
     # Update status of the machine
