@@ -5,7 +5,7 @@ Author: Jianqiu Lu
 """
 import numpy as np
 
-Oneweek = 8*2*7
+Oneweek = 8*2*5
 Dict = {"B15":0, "C17":0, "D20":0, "D25":0, "E26":0, "F35":0, "N99":0}
 Queue = dict()
 CBL = dict(Dict)
@@ -339,15 +339,15 @@ def MyPolicy(T,mac,Macs):
             mac.process(T,"F35")
         elif Queue["Dr"]["C17"]>0:
             mac.process(T,"C17")
-        elif sum(Queue["Dr"].values())<5:
+        elif Macs["Mi"][0].Last=="C17" and Macs["Mi"][0].Status>0 and sum(Queue["Dr"].values())<5:
             return True
         elif Queue["Dr"]["B15"]>3:
             mac.process(T,"B15")
-        elif sum(Queue["Dr"].values())<5:
+        elif Macs["Mi"][1].Last=="B15" and Macs["Mi"][1].Status>0 and sum(Queue["Dr"].values())<5:
             return True
         elif Queue["Dr"]["D20"]>3:
             mac.process(T,"D20")
-        elif sum(Queue["Dr"].values())<5:
+        elif Macs["Mi"][0].Last=="D20" and Macs["Mi"][0].Status>0 and sum(Queue["Dr"].values())<5:
             return True
         elif Queue["Dr"]["E26"]>3:
             mac.process(T,"E26")
@@ -473,6 +473,50 @@ def DefaultPolicy(T,mac,Macs):
             mac.process(T,"B15")
             return True
     return True
+
+def BackLogPolicy(T,mac,Macs):
+    if mac.getName()=="Chunker1":
+        if mac.Last!=None and Queue["inC"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["inC"]["B15"]>0:
+            mac.process(T,"B15")
+    elif mac.getName()=="Chunker2":
+        if  mac.Last!=None and Queue["inC"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["inC"]["B15"]>0:
+            mac.process(T,"B15")
+        elif Queue["inC"]["D25"]>0:
+            mac.process(T,"D25")
+    elif mac.getName()=="Chunker3":
+        if Queue["inC"]["D25"]>0:
+            mac.process(T,"D25")
+    elif mac.getName()=="ChunkerA":
+        if Queue["exC"]["B15"]>0:
+            mac.process(T,"B15")
+    elif mac.getName()=="ChunkerB":
+        if Queue["exC"]["B15"]>0:
+            mac.process(T,"B15")
+    elif mac.getName()=="ChunkerC":
+        if Queue["exC"]["D25"]>0:
+            mac.process(T,"D25")
+    elif mac.getName()=="ChunkerD":
+        if Queue["exC"]["D25"]>0:
+            mac.process(T,"D25")
+    elif mac.getName()=="Mill1":
+        if Queue["Mi"]["B15"]>0:
+            mac.process(T,"B15")
+    elif mac.getName()=="Mill2":
+        if Queue["Mi"]["D25"]>0:
+            mac.process(T,"D25")
+    elif mac.getName()=="Drill1":
+        if mac.Last!=None and Queue["Dr"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["Dr"]["B15"]>0:
+            mac.process(T,"B15")
+        elif Queue["Dr"]["D25"]>5:
+            mac.process(T,"D25")
+    return True
+    
     
 def ManualPolicy(T,mac,Macs):
     key = mac.getType()
@@ -562,7 +606,8 @@ while flag:
                 #flag = ManualPolicy(T,machine,Machines)
                 #flag = DefaultPolicy(T,machine,Machines)
                 #flag = NewPolicy1(T,machine,Machines)
-                flag = MyPolicy(T,machine,Machines)
+                #flag = MyPolicy(T,machine,Machines)
+                flag = BackLogPolicy(T,machine,Machines)
             if machine.getStatus()==0:
                 cnt+=1
             if machine.getStatus()<0:
