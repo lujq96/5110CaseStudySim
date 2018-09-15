@@ -312,7 +312,7 @@ def MyPolicy(T,mac,Macs):
             mac.process(T,mac.Last)
         elif Queue["exC"]["B15"]>0:
             mac.process(T,"B15")
-        elif Queue["exC"]["E26"]>0:
+        elif Queue["exC"]["E26"]>0 and Validation(mac,Macs["exC"],"E26"):
             mac.process(T,"E26")
     elif mac.getName()=="Mill1":
         if mac.Last!=None and Queue["Mi"][mac.Last]>0:
@@ -351,6 +351,8 @@ def MyPolicy(T,mac,Macs):
             return True
         elif Queue["Dr"]["E26"]>3:
             mac.process(T,"E26")
+        elif Queue["Dr"]["D25"]>5:
+            mac.process(T,"D25")
         elif Queue["Dr"]["B15"]>0:
             mac.process(T,"B15")
         elif Queue["Dr"]["D20"]>0:
@@ -359,6 +361,31 @@ def MyPolicy(T,mac,Macs):
             mac.process(T,"E26")
         elif Queue["Dr"]["D25"]>0:
             mac.process(T,"D25")
+    elif mac.getName()=="Drill2":
+        if mac.Last!=None and Queue["Dr"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["Dr"]["D25"]>5:
+            mac.process(T,"D25")
+        elif Queue["Dr"]["E26"]>0:
+            mac.process(T,"E26")
+        elif Macs["Mi"][1].Last=="E26" and Macs["Mi"][1].Status>0 and sum(Queue["Dr"].values())<5:
+            return True
+        elif Queue["Dr"]["D20"]>3:
+            mac.process(T,"D20")
+        elif Macs["Mi"][0].Last=="D20" and Macs["Mi"][0].Status>0 and sum(Queue["Dr"].values())<5:
+            return True
+        elif Queue["Dr"]["B15"]>3:
+            mac.process(T,"B15")
+        elif Macs["Mi"][1].Last=="B15" and Macs["Mi"][1].Status>0 and sum(Queue["Dr"].values())<5:
+            return True
+        elif Queue["Dr"]["D25"]>0:
+            mac.process(T,"D25")
+        elif Queue["Dr"]["E26"]>0:
+            mac.process(T,"E26")
+        elif Queue["Dr"]["D20"]>0:
+            mac.process(T,"D20")
+        elif Queue["Dr"]["B15"]>0:
+            mac.process(T,"B15")
     return True
     
 def DefaultPolicy(T,mac,Macs):
@@ -559,6 +586,8 @@ flag = True
 flag1 = True
 worker =[0,0,0,0,0,0,0,0,0,0,0]
 while flag:
+    #if T==Oneweek*2:
+    #    Machines["Dr"].append(Machine(Type="Dr",Name="Drill2"))
     if T%(Oneweek)==0:
         WaitTime = reset(Machines)
         print("\nWorking worker number: {}".format(worker))
@@ -606,8 +635,8 @@ while flag:
                 #flag = ManualPolicy(T,machine,Machines)
                 #flag = DefaultPolicy(T,machine,Machines)
                 #flag = NewPolicy1(T,machine,Machines)
-                #flag = MyPolicy(T,machine,Machines)
-                flag = BackLogPolicy(T,machine,Machines)
+                flag = MyPolicy(T,machine,Machines)
+                #flag = BackLogPolicy(T,machine,Machines)
             if machine.getStatus()==0:
                 cnt+=1
             if machine.getStatus()<0:
