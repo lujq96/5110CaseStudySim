@@ -5,6 +5,7 @@ Author: Jianqiu Lu
 """
 import numpy as np
 
+Oneweek = 8*2*7
 Dict = {"B15":0, "C17":0, "D20":0, "D25":0, "E26":0, "F35":0, "N99":0}
 Queue = dict()
 CBL = dict(Dict)
@@ -165,8 +166,91 @@ def PeopleVal(Macs):
         return False
     return True
     
-def Policy1(mac,Macs):
-    mac = 1
+def NewPolicy1(T,mac,Macs):
+    if mac.getName()=="Chunker1":
+        if Queue["inC"]["B15"]>0:
+            mac.process(T,"B15")
+    elif mac.getName()=="Chunker2":
+        if Queue["inC"]["C17"]>0:
+            mac.process(T,"C17")
+    elif mac.getName()=="ChunkerA":
+        if Queue["exC"]["B15"]>0:
+            mac.process(T,"B15")
+    elif mac.getName()=="ChunkerB":
+        if Queue["exC"]["C17"]>0:
+            mac.process(T,"C17")
+    elif mac.getName()=="ChunkerC":
+        if Queue["exC"]["D25"]>0:
+            mac.process(T,"D25")
+    elif mac.getName()=="Chunker3":
+        if mac.Last!=None and Queue["inC"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif (T%(2*Oneweek)<0.4*Oneweek):
+            if Queue["inC"]["D20"]>0:
+                mac.process(T,"D20")
+            elif Queue["inC"]["D25"]>0:
+                mac.process(T,"D25")
+            elif Queue["inC"]["E26"]>0:
+                mac.process(T,"E26")
+        elif (T%(2*Oneweek)<1.2*Oneweek):
+            if Queue["inC"]["D25"]>0:
+                mac.process(T,"D25")
+            elif Queue["inC"]["E26"]>0:
+                mac.process(T,"E26")
+            elif Queue["inC"]["D20"]>0:
+                mac.process(T,"D20")
+        else:
+            if Queue["inC"]["E26"]>0:
+                mac.process(T,"E26")
+            elif Queue["inC"]["D20"]>0:
+                mac.process(T,"D20")
+            elif Queue["inC"]["D25"]>0:
+                mac.process(T,"D25")
+    elif mac.getName()=="ChunkerD":
+        if mac.Last!=None and Queue["exC"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["exC"]["D20"]>0:
+            mac.process(T,"D20")
+        elif Queue["exC"]["E26"]>0:
+            mac.process(T,"E26")
+    elif mac.getName()=="Mill1":
+        if mac.Last!=None and Queue["Mi"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["Mi"]["B15"]>0:
+            mac.process(T,"B15")
+        elif Queue["Mi"]["E26"]>5:
+            mac.process(T,"E26")
+        elif Macs["exC"][0].getStatus()==0 and Queue["Mi"]["E26"]>0:
+            mac.process(T,"E26")
+    elif mac.getName()=="Mill2":
+        if mac.Last!=None and Queue["Mi"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["Mi"]["C17"]>0:
+            mac.process(T,"C17")
+        elif Queue["Mi"]["D20"]>5:
+            mac.process(T,"D20")
+        elif Queue["Mi"]["D25"]>5:
+            mac.process(T,"D25")
+        elif Macs["exC"][1].getStatus()==0 and Queue["Mi"]["D20"]>0:
+            mac.process(T,"D20")
+        elif Macs["exC"][1].getStatus()==0 and (Macs["exC"][3].getStatus()==0 or Macs["exC"][3].Last!="D20") and Queue["Mi"]["D25"]>0:
+            mac.process(T,"D25")
+    elif mac.getName()=="Drill1":
+        if mac.Last!=None and Queue["Dr"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["Dr"]["F35"]>0:
+            mac.process(T,"F35")
+        elif Queue["Dr"]["C17"]>0:
+            mac.process(T,"C17")
+        elif Queue["Dr"]["B15"]>0:
+            mac.process(T,"B15")
+        elif Queue["Dr"]["D20"]>0:
+            mac.process(T,"D20")
+        elif Queue["Dr"]["E26"]>0:
+            mac.process(T,"E26")
+        elif Queue["Dr"]["D25"]>0:
+            mac.process(T,"D25")
+    return True
     
 def DefaultPolicy(T,mac,Macs):
     if mac.getName()=="Chunker1":
@@ -322,7 +406,7 @@ flag = True
 flag1 = True
 worker =[0,0,0,0,0,0,0,0,0,0,0]
 while flag:
-    if T%(8*2*7)==0:
+    if T%(Oneweek)==0:
         WaitTime = reset(Machines)
         print("\nWorking worker number: {}".format(worker))
         print("Current BackLog: {}".format(CBL))
@@ -367,7 +451,8 @@ while flag:
             if machine.getStatus()==0 and set(Queue[machine.getType()].values())!=set([0]):
                 #Policy1(T,machine,Machines)
                 #flag = ManualPolicy(T,machine,Machines)
-                flag = DefaultPolicy(T,machine,Machines)
+                #flag = DefaultPolicy(T,machine,Machines)
+                flag = NewPolicy1(T,machine,Machines)
             if machine.getStatus()==0:
                 cnt+=1
             if machine.getStatus()<0:
