@@ -4,6 +4,7 @@ Basic Simulation Framework for the Case Study
 Author: Jianqiu Lu
 """
 import numpy as np
+import DemandAnalysis
 
 Oneweek = 8*2*5
 Dict = {"B15":0, "C17":0, "D20":0, "D25":0, "E26":0, "F35":0, "N99":0}
@@ -585,6 +586,7 @@ Machines = {"inC":inChunker,"exC":exChunker,"Mi":Mill,"Dr":Drill}
 flag = True
 flag1 = True
 worker =[0,0,0,0,0,0,0,0,0,0,0]
+Need = None
 while flag:
     #if T==Oneweek*2:
     #    Machines["Dr"].append(Machine(Type="Dr",Name="Drill2"))
@@ -598,7 +600,10 @@ while flag:
                 for machine in Machines[key]:
                     print("{}: {}".format(machine.getName(),machine.Processed))
         flag1 = True
-        input("Press any key to continue.")
+        Q = input("Press any key to continue.Q TO EXIT")
+        if Q=="Q":
+            break
+        """
         print("New week comes. Please add the demand!")
         Need=int(input("B15: "))
         Queue["inC"]["B15"]+=Need
@@ -618,7 +623,25 @@ while flag:
         Need=int(input("F35: "))
         Queue["Dr"]["F35"]+=Need
         CBL["F35"]+=Need
-        ... #Here comes other prediction of needs
+        """
+        if Need==None:
+            Need = DemandAnalysis.demand_gen()
+        else:
+            Need += DemandAnalysis.demand_gen()
+        if T==0:
+            Queue["inC"]={"B15":58, "C17":34, "D20":15, "D25":40, "E26":14, "F35":0, "N99":0}
+            Queue["Dr"]["F35"]=3
+            CBL={"B15":58, "C17":34, "D20":15, "D25":40, "E26":14, "F35":3, "N99":0}
+        Add = input("It is Week {} now. Add cumulative demand?(Y/N) ".format(T//Oneweek+1))
+        if Add=="Y":
+            Queue["inC"]["B15"]+=Need[0];CBL["B15"]+=Need[0]
+            Queue["inC"]["C17"]+=Need[1];CBL["C17"]+=Need[1]
+            Queue["inC"]["D20"]+=Need[2];CBL["D20"]+=Need[2]
+            Queue["inC"]["D25"]+=Need[3];CBL["D25"]+=Need[3]
+            Queue["inC"]["E26"]+=Need[4];CBL["E26"]+=Need[4]
+            Queue["Dr"]["F35"]+=Need[5];CBL["F35"]+=Need[5]
+            Need = None
+        #Here comes other prediction of needs
     # Maybe we can have more machine? To add a machine, please put code here.
     # Update status of the machine
     for key in Machines.keys():
@@ -649,7 +672,7 @@ while flag:
                 for machine in Machines[key]:
                     print("{}: {}".format(machine.getName(),machine.Processed))
             flag1 = False
-        input("Finished!")
+            input("Finished!")
     StatusPrint(T,Queue,Machines,"end")
     T+=0.5
     #Output What happened Now.
