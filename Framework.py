@@ -624,16 +624,19 @@ while flag:
         Queue["Dr"]["F35"]+=Need
         CBL["F35"]+=Need
         """
-        if Need==None:
-            Need = DemandAnalysis.demand_gen()
+        if Need is None:
+            Need = np.array(DemandAnalysis.demand_gen())
         else:
-            Need += DemandAnalysis.demand_gen()
+            Need += np.array(DemandAnalysis.demand_gen())
         if T==0:
             Queue["inC"]={"B15":58, "C17":34, "D20":15, "D25":40, "E26":14, "F35":0, "N99":0}
             Queue["Dr"]["F35"]=3
             CBL={"B15":58, "C17":34, "D20":15, "D25":40, "E26":14, "F35":3, "N99":0}
+        print(Need)
         Add = input("It is Week {} now. Add cumulative demand?(Y/N) ".format(T//Oneweek+1))
         if Add=="Y":
+            #Pressure Test
+            Need = [int(1.5*x) for x in Need]
             Queue["inC"]["B15"]+=Need[0];CBL["B15"]+=Need[0]
             Queue["inC"]["C17"]+=Need[1];CBL["C17"]+=Need[1]
             Queue["inC"]["D20"]+=Need[2];CBL["D20"]+=Need[2]
