@@ -6,7 +6,7 @@ Author: Jianqiu Lu
 import numpy as np
 import DemandAnalysis
 
-Oneweek = 8*2*5
+Oneweek = 8*11
 Dict = {"B15":0, "C17":0, "D20":0, "D25":0, "E26":0, "F35":0, "N99":0}
 Queue = dict()
 CBL = dict(Dict)
@@ -586,7 +586,10 @@ Machines = {"inC":inChunker,"exC":exChunker,"Mi":Mill,"Dr":Drill}
 flag = True
 flag1 = True
 worker =[0,0,0,0,0,0,0,0,0,0,0]
+FBL = []
 Need = None
+#def demand_gen(t=1):
+#    return [8,14,3,4,4,2]
 while flag:
     #if T==Oneweek*2:
     #    Machines["Dr"].append(Machine(Type="Dr",Name="Drill2"))
@@ -594,6 +597,8 @@ while flag:
         WaitTime = reset(Machines)
         print("\nWorking worker number: {}".format(worker))
         print("Current BackLog: {}".format(CBL))
+        if T!=0:
+            FBL.append([CBL["B15"]+Need[0],CBL["C17"]+Need[1],CBL["D20"]+Need[2],CBL["D25"]+Need[3],CBL["E26"]+Need[4],CBL["F35"]+Need[5]])
         worker = [0,0,0,0,0,0,0,0,0,0,0]
         print("\n Table of models processed by each machine:")
         for key in Machines.keys():
@@ -624,10 +629,6 @@ while flag:
         Queue["Dr"]["F35"]+=Need
         CBL["F35"]+=Need
         """
-        if Need is None:
-            Need = np.array(DemandAnalysis.demand_gen())
-        else:
-            Need += np.array(DemandAnalysis.demand_gen())
         if T==0:
             Queue["inC"]={"B15":58, "C17":34, "D20":15, "D25":40, "E26":14, "F35":0, "N99":0}
             Queue["Dr"]["F35"]=3
@@ -636,7 +637,7 @@ while flag:
         Add = input("It is Week {} now. Add cumulative demand?(Y/N) ".format(T//Oneweek+1))
         if Add=="Y":
             #Pressure Test
-            Need = [int(1.5*x) for x in Need]
+            #Need = [int(1.5*x) for x in Need]
             Queue["inC"]["B15"]+=Need[0];CBL["B15"]+=Need[0]
             Queue["inC"]["C17"]+=Need[1];CBL["C17"]+=Need[1]
             Queue["inC"]["D20"]+=Need[2];CBL["D20"]+=Need[2]
@@ -644,6 +645,10 @@ while flag:
             Queue["inC"]["E26"]+=Need[4];CBL["E26"]+=Need[4]
             Queue["Dr"]["F35"]+=Need[5];CBL["F35"]+=Need[5]
             Need = None
+        if Need is None:
+            Need = np.array(DemandAnalysis.demand_gen(t=int(T//Oneweek+1)))
+        else:
+            Need += np.array(DemandAnalysis.demand_gen(t=int(T//Oneweek+1)))
         #Here comes other prediction of needs
     # Maybe we can have more machine? To add a machine, please put code here.
     # Update status of the machine
