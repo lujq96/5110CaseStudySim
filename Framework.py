@@ -4,6 +4,7 @@ Basic Simulation Framework for the Case Study
 Author: Jianqiu Lu
 """
 import numpy as np
+import copy
 import DemandAnalysis
 
 Oneweek = 8*11
@@ -365,7 +366,7 @@ def MyPolicy(T,mac,Macs):
     elif mac.getName()=="Drill2":
         if mac.Last!=None and Queue["Dr"][mac.Last]>0:
             mac.process(T,mac.Last)
-        elif Queue["Dr"]["D25"]>5:
+        elif Queue["Dr"]["D25"]>0:
             mac.process(T,"D25")
         elif Queue["Dr"]["E26"]>0:
             mac.process(T,"E26")
@@ -388,7 +389,143 @@ def MyPolicy(T,mac,Macs):
         elif Queue["Dr"]["B15"]>0:
             mac.process(T,"B15")
     return True
-    
+
+def LongTermPolicy(T,mac,Macs):
+    if mac.getName()=="Chunker1":
+        if mac.Last!=None and Queue["inC"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["inC"]["C17"]>0:
+            mac.process(T,"C17")
+        elif Queue["inC"]["E26"]>0:
+            mac.process(T,"E26")
+    elif mac.getName()=="Chunker2":
+        if (mac.Last=="D20" or mac.Last=="D25") and Queue["inC"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["inC"]["D20"]>0:
+            mac.process(T,"D20")
+        elif Queue["inC"]["D25"]>0:
+            mac.process(T,"D25")
+        elif Queue["inC"]["B15"]>0:
+            mac.process(T,"B15")
+    elif mac.getName()=="Chunker3":
+        if mac.Last!=None and Queue["inC"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["inC"]["B15"]>0:
+            mac.process(T,"B15")
+        elif Queue["inC"]["E26"]>0:
+            mac.process(T,"E26")
+    elif mac.getName()=="ChunkerA":
+        if mac.Last!=None and Queue["exC"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["exC"]["C17"]>0:
+            mac.process(T,"C17")
+        elif Queue["exC"]["E26"]>0 and Validation(mac,Macs["exC"],"E26"):
+            mac.process(T,"E26")
+        elif Queue["exC"]["D20"]>0 and Validation(mac,Macs["exC"],"D20"):
+            mac.process(T,"D20")
+        elif Queue["exC"]["D25"]>0 and Validation(mac,Macs["exC"],"D25"):
+            mac.process(T,"D25")
+    elif mac.getName()=="ChunkerB":
+        if mac.Last!=None and Queue["exC"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["exC"]["C17"]>0:
+            mac.process(T,"C17")
+        elif Queue["exC"]["E26"]>0 and Validation(mac,Macs["exC"],"E26"):
+            mac.process(T,"E26")
+        elif Queue["exC"]["D20"]>0 and Validation(mac,Macs["exC"],"D20"):
+            mac.process(T,"D20")
+        elif Queue["exC"]["D25"]>0 and Validation(mac,Macs["exC"],"D25"):
+            mac.process(T,"D25")
+    elif mac.getName()=="ChunkerC":
+        if mac.Last!=None and Queue["exC"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["exC"]["D25"]>0 and Validation(mac,Macs["exC"],"D25"):
+            mac.process(T,"D25")
+        elif Queue["exC"]["D20"]>0 and Validation(mac,Macs["exC"],"D20"):
+            mac.process(T,"D20")
+        elif Queue["exC"]["B15"]>0:
+            mac.process(T,"B15")
+    elif mac.getName()=="ChunkerD":
+        if mac.Last!=None and Queue["exC"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["exC"]["B15"]>0:
+            mac.process(T,"B15")
+        elif Queue["exC"]["E26"]>0 and Validation(mac,Macs["exC"],"E26"):
+            mac.process(T,"E26")
+    elif mac.getName()=="Mill1":
+        if mac.Last!=None and Queue["Mi"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["Mi"]["C17"]>0:
+            mac.process(T,"C17")
+        elif Queue["Mi"]["D20"]>0:
+            mac.process(T,"D20")
+        elif Queue["Mi"]["D25"]>0:
+            mac.process(T,"D25")
+    elif mac.getName()=="Mill2":
+        if mac.Last!=None and Queue["Mi"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["Mi"]["B15"]>0:
+            mac.process(T,"B15")
+        elif Queue["Mi"]["E26"]>0:
+            mac.process(T,"E26")
+        elif Queue["Mi"]["D25"]>3:
+            mac.process(T,"D25")
+    elif mac.getName()=="Drill1":
+        if mac.Last!=None and Queue["Dr"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["Dr"]["F35"]>0:
+            mac.process(T,"F35")
+        elif Queue["Dr"]["C17"]>0:
+            mac.process(T,"C17")
+        elif Macs["Mi"][0].Last=="C17" and Macs["Mi"][0].Status>0 and sum(Queue["Dr"].values())<5:
+            return True
+        elif Queue["Dr"]["B15"]>3:
+            mac.process(T,"B15")
+        elif Macs["Mi"][1].Last=="B15" and Macs["Mi"][1].Status>0 and sum(Queue["Dr"].values())<5:
+            return True
+        elif Queue["Dr"]["D20"]>3:
+            mac.process(T,"D20")
+        elif Macs["Mi"][0].Last=="D20" and Macs["Mi"][0].Status>0 and sum(Queue["Dr"].values())<5:
+            return True
+        elif Queue["Dr"]["E26"]>3:
+            mac.process(T,"E26")
+        elif Queue["Dr"]["D25"]>5:
+            mac.process(T,"D25")
+        elif Queue["Dr"]["B15"]>0:
+            mac.process(T,"B15")
+        elif Queue["Dr"]["D20"]>0:
+            mac.process(T,"D20")
+        elif Queue["Dr"]["E26"]>0:
+            mac.process(T,"E26")
+        elif Queue["Dr"]["D25"]>0:
+            mac.process(T,"D25")
+    elif mac.getName()=="Drill2":
+        if mac.Last!=None and Queue["Dr"][mac.Last]>0:
+            mac.process(T,mac.Last)
+        elif Queue["Dr"]["D25"]>0:
+            mac.process(T,"D25")
+        elif Queue["Dr"]["E26"]>0:
+            mac.process(T,"E26")
+        elif Macs["Mi"][1].Last=="E26" and Macs["Mi"][1].Status>0 and sum(Queue["Dr"].values())<5:
+            return True
+        elif Queue["Dr"]["D20"]>3:
+            mac.process(T,"D20")
+        elif Macs["Mi"][0].Last=="D20" and Macs["Mi"][0].Status>0 and sum(Queue["Dr"].values())<5:
+            return True
+        elif Queue["Dr"]["B15"]>3:
+            mac.process(T,"B15")
+        elif Macs["Mi"][1].Last=="B15" and Macs["Mi"][1].Status>0 and sum(Queue["Dr"].values())<5:
+            return True
+        elif Queue["Dr"]["D25"]>0:
+            mac.process(T,"D25")
+        elif Queue["Dr"]["E26"]>0:
+            mac.process(T,"E26")
+        elif Queue["Dr"]["D20"]>0:
+            mac.process(T,"D20")
+        elif Queue["Dr"]["B15"]>0:
+            mac.process(T,"B15")
+    return True
+
 def DefaultPolicy(T,mac,Macs):
     if mac.getName()=="Chunker1":
         if Queue["inC"]["C17"]>0:
@@ -588,12 +725,17 @@ flag1 = True
 worker =[0,0,0,0,0,0,0,0,0,0,0]
 FBL = []
 Need = None
+NeedByWeek = []
+f=open("result.txt","w")
+Last=copy.copy(Queue["Fin"])
 #def demand_gen(t=1):
 #    return [8,14,3,4,4,2]
-while flag:
-    #if T==Oneweek*2:
-    #    Machines["Dr"].append(Machine(Type="Dr",Name="Drill2"))
+while flag :#and flag1 and T<=Oneweek*17:
+    if T==Oneweek*2:
+        Machines["Dr"].append(Machine(Type="Dr",Name="Drill2"))
     if T%(Oneweek)==0:
+        f.write(str([(Queue["Fin"][k]-Last[k]) for k in Queue["Fin"].keys()])+"\n")
+        Last = copy.copy(Queue["Fin"])
         WaitTime = reset(Machines)
         print("\nWorking worker number: {}".format(worker))
         print("Current BackLog: {}".format(CBL))
@@ -634,7 +776,11 @@ while flag:
             Queue["Dr"]["F35"]=3
             CBL={"B15":58, "C17":34, "D20":15, "D25":40, "E26":14, "F35":3, "N99":0}
         print(Need)
-        Add = input("It is Week {} now. Add cumulative demand?(Y/N) ".format(T//Oneweek+1))
+        #Add = input("It is Week {} now. Add cumulative demand?(Y/N) ".format(T//Oneweek+1))
+        if int(T//Oneweek+1) in {3,5,7,9,11,13,14}:
+            Add = "Y"
+        else:
+            Add = "N"
         if Add=="Y":
             #Pressure Test
             #Need = [int(1.5*x) for x in Need]
@@ -645,10 +791,11 @@ while flag:
             Queue["inC"]["E26"]+=Need[4];CBL["E26"]+=Need[4]
             Queue["Dr"]["F35"]+=Need[5];CBL["F35"]+=Need[5]
             Need = None
+        NeedByWeek.append(np.array(DemandAnalysis.demand_gen(t=int(T//Oneweek+1))))
         if Need is None:
-            Need = np.array(DemandAnalysis.demand_gen(t=int(T//Oneweek+1)))
+            Need = NeedByWeek[-1]
         else:
-            Need += np.array(DemandAnalysis.demand_gen(t=int(T//Oneweek+1)))
+            Need = Need+NeedByWeek[-1]
         #Here comes other prediction of needs
     # Maybe we can have more machine? To add a machine, please put code here.
     # Update status of the machine
@@ -689,3 +836,6 @@ while flag:
         for val in WaitTime[key].keys():
             WaitTime[key][val]+=Queue[key][val]*0.5
         print("{}: {}".format(key,WaitTime[key]))
+f.close()
+pd.DataFrame(NeedByWeek).to_csv("Demand0.csv")
+pd.DataFrame(FBL).to_csv("BackLogShortRun.csv")
