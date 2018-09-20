@@ -776,11 +776,13 @@ while flag :#and flag1 and T<=Oneweek*17:
             Queue["Dr"]["F35"]=3
             CBL={"B15":58, "C17":34, "D20":15, "D25":40, "E26":14, "F35":3, "N99":0}
         print(Need)
-        #Add = input("It is Week {} now. Add cumulative demand?(Y/N) ".format(T//Oneweek+1))
+        Add = input("It is Week {} now. Add cumulative demand?(Y/N) ".format(T//Oneweek+1))
+        """
         if int(T//Oneweek+1) in {3,5,7,9,11,13,14}:
             Add = "Y"
         else:
             Add = "N"
+        """
         if Add=="Y":
             #Pressure Test
             #Need = [int(1.5*x) for x in Need]
@@ -836,6 +838,7 @@ while flag :#and flag1 and T<=Oneweek*17:
         for val in WaitTime[key].keys():
             WaitTime[key][val]+=Queue[key][val]*0.5
         print("{}: {}".format(key,WaitTime[key]))
+    input("Press any key to Continue")
 f.close()
 pd.DataFrame(NeedByWeek).to_csv("Demand0.csv")
 pd.DataFrame(FBL).to_csv("BackLogShortRun.csv")
